@@ -12,7 +12,7 @@
       - python3-libsemanage
       - libselinux-utils
       - policycoreutils
-      - selinux-policy-target
+      - selinux-policy-targeted
   - name: Put SELinux in permissive mode, logging actions that would be blocked.
     ansible.posix.selinux:
       policy: targeted
