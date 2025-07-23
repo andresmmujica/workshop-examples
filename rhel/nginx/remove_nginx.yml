@@ -1,0 +1,9 @@
+---
+- name: Nginx server uninstall
+  hosts: web
+
+  tasks:
+  - name: remove Nginx
+    yum:
+      name: nginx
+      state: absent
