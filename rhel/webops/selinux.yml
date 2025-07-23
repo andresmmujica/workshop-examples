@@ -1,0 +1,19 @@
+---
+- name: selinux enabled
+  hosts: web
+
+  tasks:
+  - name: latest selinux python libraries installed
+    yum:
+      name: "{{ item }}"
+      state: latest
+    loop:
+      - python3-libselinux
+      - python3-libsemanage
+      - libselinux-utils
+      - policycoreutils
+      - selinux-policy-target
+  - name: Put SELinux in permissive mode, logging actions that would be blocked.
+    ansible.posix.selinux:
+      policy: targeted
+      state: permissive
