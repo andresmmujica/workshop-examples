@@ -3,6 +3,9 @@
   hosts: web
 
   tasks:
+  - name: Gather service facts
+    ansible.builtin.service_facts
+    
   - name: latest Apache version installed
     yum:
       name: httpd
@@ -25,6 +28,8 @@
       permanent: false
       state: enabled
       immediate: false
+    when:
+      - ansible_facts['services']['firewalld.service']['status'] == 'running'
 
   - name: Apache enabled and running
     service:
