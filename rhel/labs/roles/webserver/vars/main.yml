@@ -1,0 +1,14 @@
+#SPDX-License-Identifier: MIT-0
+---
+# vars file for roles/webserver
+webserver_pkg: ""
+webserver_conf: ""
+altpkg: ""
+webserver_dir: ""
+owner: ""
+group: ""
+
+loop_lines:
+  - "Ansible Version {{ ansible_version.full }}"
+  - "Host: {{ inventory_hostname }} ({{ ansible_hostname }})"
+  - "OS: {{ ansible_distribution }} {{ ansible_distribution_version }}"

@@ -1,0 +1,7 @@
+---
+- name: using web server role
+  hosts: web
+  become: true
+
+  roles:
+    - webserver

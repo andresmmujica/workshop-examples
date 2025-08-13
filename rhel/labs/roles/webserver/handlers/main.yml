@@ -1,0 +1,9 @@
+#SPDX-License-Identifier: MIT-0
+---
+# handlers file for roles/webserver
+- name: restart_webserver_handler
+  listen: restart_webserver_handler
+  ansible.builtin.service:
+    name: "{{ webserver_pkg }}"
+    enabled: true
+    state: restarted

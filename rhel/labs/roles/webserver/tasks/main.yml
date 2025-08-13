@@ -1,0 +1,82 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/webserver
+
+- name: Set up variables according to inventory
+  set_fact:
+    webserver_pkg: "nginx"
+    webserver_conf: "/etc/nginx/nginx.conf"
+    altpkg: "httpd"
+    webserver_dir: "/usr/share/nginx/html"
+    owner: "nginx"
+    group: "nginx"
+  when: inventory_hostname in groups["nginx"]
+
+- name: Set up variables according to inventory
+  set_fact:
+    webserver_pkg: "httpd"
+    webserver_conf: "/etc/httpd/conf/httpd.conf"
+    altpkg: "nginx"
+    webserver_dir: "/var/www/html"
+    owner: "apache"
+    group: "apache"
+  when: inventory_hostname in groups["apache"]
+
+- name: Check if web server is Installed
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: Remove existing web Server
+  ansible.builtin.package:
+    name: "{{ altpkg }}"
+    state: absent
+  when: altpkg in ansible_facts.packages
+
+- name: Install Web Server
+  ansible.builtin.package:
+    name: "{{ webserver_pkg }}"
+    state: present
+  notify:
+    - restart_webserver_handler
+
+- name: Copy webserver index html file
+  ansible.builtin.template:
+    src: webserver.html.j2
+    dest: "{{ webserver_dir }}/index.html"
+    mode: "0644"
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+  notify:
+    - restart_webserver_handler
+
+- name: Insert Ansible banner in a config file
+  ansible.builtin.lineinfile:
+    path: "{{ webserver_conf }}"
+    line: "###Managed by Ansible - DO NOT MODIFY###"
+    insertafter: BOF
+    create: true
+  notify:
+    - restart_webserver_handler
+  
+#- name: fix error in config file
+#  ansible.builtin.lineinfile:
+#    path: "{{ webserver_conf }}"
+#    regexp: "Managed by Ansible - DO NOT MODIFY"
+#    state: absent
+#  notify:
+#    - restart_webserver_handler      
+
+- name: Update index.html file
+  ansible.builtin.blockinfile:
+    path: "{{ webserver_dir }}/index.html"
+    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
+    insertafter: "<body>"
+    block: |
+      <br>
+      <h1>Welcome to {{ ansible_hostname }}</h1>
+      <p>Last updated on {{ ansible_date_time.iso8601 }}</p>
+      <ul>
+      {% for line in loop_lines %}
+        <li>{{ line }}</li>
+      {% endfor %}
+      </ul>
