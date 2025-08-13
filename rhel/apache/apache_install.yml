@@ -16,8 +16,8 @@
   - name: firewalld enabled and running
     service:
       name: firewalld
-      enabled: true
-      state: started
+      enabled: false
+      state: stopped
 
   - name: firewalld permits http service
     firewalld:
