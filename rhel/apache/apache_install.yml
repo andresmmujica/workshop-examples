@@ -14,7 +14,7 @@
       ansible.builtin.package:
         name: nginx
         state: absent
-      when: "nginx" in ansible_facts.packages
+      when: '"nginx" in ansible_facts.packages'
     
   - name: latest Apache version installed
     yum:
