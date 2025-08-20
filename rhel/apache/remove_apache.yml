@@ -1,0 +1,16 @@
+---
+- name: Apache server removed
+  hosts: web
+
+  tasks:
+  - name: Gather service facts
+    ansible.builtin.service_facts:
+    
+  - name: Check if web server is Installed
+    ansible.builtin.package_facts:
+      manager: auto
+
+  - name: Remove existing web Server
+    ansible.builtin.package:
+      name: httpd
+      state: absent
